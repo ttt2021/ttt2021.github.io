@@ -1,0 +1,688 @@
+<!DOCTYPE html><html lang="zh-Hans" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>你不知道的冒泡排序优化 | 星语の博客</title><meta name="keywords" content="排序"><meta name="author" content="遇见"><meta name="copyright" content="遇见"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="数据结构">
+<meta property="og:type" content="article">
+<meta property="og:title" content="你不知道的冒泡排序优化">
+<meta property="og:url" content="https://ttt2021.github.io/posts/61988d84/index.html">
+<meta property="og:site_name" content="星语の博客">
+<meta property="og:description" content="数据结构">
+<meta property="og:locale">
+<meta property="og:image" content="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/61e44ece224b418488139a4bed638791~tplv-k3u1fbpfcp-zoom-1.image">
+<meta property="article:published_time" content="2021-05-15T08:33:21.111Z">
+<meta property="article:modified_time" content="2021-05-15T08:54:40.046Z">
+<meta property="article:author" content="遇见">
+<meta property="article:tag" content="排序">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/61e44ece224b418488139a4bed638791~tplv-k3u1fbpfcp-zoom-1.image"><link rel="shortcut icon" href="https://i.loli.net/2021/04/01/F5RupvTwdLaoAlq.png"><link rel="canonical" href="https://ttt2021.github.io/posts/61988d84/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"We didn't find any results for the search: ${query}"}},
+  translate: {"defaultEncoding":1,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"简"},
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: 'days',
+  date_suffix: {
+    just: 'Just',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: {"limitCount":50,"languages":{"author":"Author: 遇见","link":"Link: ","source":"Source: 星语の博客","info":"Copyright is owned by the author. For commercial reprints, please contact the author for authorization. For non-commercial reprints, please indicate the source."}},
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    jQuery: 'https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js',
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+    },
+    fancybox: {
+      js: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: true,
+  isToc: true,
+  postUpdate: '2021-05-15 16:54:40'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const fontSizeVal = saveToLocal.get('global-font-size')
+    if (fontSizeVal !== undefined) {
+      document.documentElement.style.setProperty('--global-font-size', fontSizeVal + 'px')
+    }
+    })(window)</script><script type="text/javascript" src="/js/love.js"></script><script type="text/javascript" src="http://libs.baidu.com/jquery/1.8.3/jquery.js"></script><script type="text/javascript" src="http://libs.baidu.com/jquery/1.8.3/jquery.min.js"></script><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/HCLonely/images@master/others/heartbeat.min.css"><script type="text/javascript" src="/js/snow.js"></script><link rel="stylesheet" href="/gitcalendar/css/gitcalendar.css"/><script type="text/javascript" color="122 103 238" opacity='0.7' zIndex="-2" count="200" src="http//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js"></script><meta name="generator" content="Hexo 5.4.0"><link rel="alternate" href="/atom.xml" title="星语の博客" type="application/atom+xml">
+</head><body><div id="loading-box"><div class="loading-left-bg"></div><div class="loading-right-bg"></div><div class="spinner-box"><div class="configure-border-1"><div class="configure-core"></div></div><div class="configure-border-2"><div class="configure-core"></div></div><div class="loading-word">Loading...</div></div></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="author-avatar"><img class="avatar-img" src="https://i.loli.net/2021/04/01/kU2cj5qEKeXaJNo.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">2</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">Tags</div><div class="length-num">2</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/categories/"><div class="headline">Categories</div><div class="length-num">2</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情链接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div><div class="menus_item"><a class="site-page" href="/comments/"><i class="fa-fw fas fa-comments faa-float animated"></i><span> 留言板</span></a></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down expand"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/book/"><i class="fa-fw fas fa-book"></i><span> 书单</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-camera-retro"></i><span> 相册</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/61e44ece224b418488139a4bed638791~tplv-k3u1fbpfcp-zoom-1.image')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">星语の博客</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> Search</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情链接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div><div class="menus_item"><a class="site-page" href="/comments/"><i class="fa-fw fas fa-comments faa-float animated"></i><span> 留言板</span></a></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down expand"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/book/"><i class="fa-fw fas fa-book"></i><span> 书单</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-camera-retro"></i><span> 相册</span></a></li></ul></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">你不知道的冒泡排序优化</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2021-05-15T08:33:21.111Z" title="Created 2021-05-15 16:33:21">2021-05-15</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2021-05-15T08:54:40.046Z" title="Updated 2021-05-15 16:54:40">2021-05-15</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">Word count:</span><span class="word-count">3.2k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">Reading time:</span><span>12min</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="你不知道的冒泡排序优化"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post View:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><blockquote>
+<p>  什么是冒泡排序呢？冒泡排序其实就是一种基础的交换排序。它之所以被叫作冒泡排序是因为需要排序的每一个元素都可以像汽水中的小气泡一样，根据自身的大小，经由交换慢慢 “浮” 到数组的一侧。</p>
+</blockquote>
+<h2 id="算法思想"><a class="markdownIt-Anchor" href="#算法思想">#</a> 算法思想</h2>
+<p>  以从左往右、从小到大为例</br>  (1) 从左往右依次比较相邻元素的大小，更大的元素交换到右侧。</br>  (2) 从第一组相邻元素比较到最后一组相邻元素，结束后最后一个元素则是参与比较的元素中的最大的元素。</br>  (3) 再重新从左往右依次比较相邻，但前一轮中得到的最后一个元素不参与比较，由此得到新一轮的最大元素。</br>  (4) 重复步骤 (3)，直到没有任何一组元素需要进行比较。<br/>  为了更形象地理解冒泡排序，我通过动画的形式给大家展示一下冒泡算法是如何具体的移动的呢？</p>
+<p><img src="https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/c197dad38b7a4fbf8c8345cf133f969e~tplv-k3u1fbpfcp-watermark.image" alt=""></p>
+<p>  有一个无序数组：3，44，38，5，47，15，36，26，27，希望从小到大排序。</br>  按照冒泡排序的思想，我们应该把相邻元素进行两两比较，根据其比较的大小来交换两者的位置，动画过程解释如下：</br>  首先让 3 和 44 进行比较，发现 3 比 44 小，因此元素位置不改变。</br>  接下来比较 44 和 38，发现 44 比 38 大，交换两者的位置。</p>
+<p><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/576ad3948bcb46f59874882bb4f67897~tplv-k3u1fbpfcp-watermark.image" alt=""></p>
+<p>  继续让 44 和 5 比较，发现 44 比 5 大，交换两者的位置。</p>
+<p><img src="https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/e75e5e68b3bf42dab77935fd92e9b350~tplv-k3u1fbpfcp-watermark.image" alt=""></p>
+<p>  继续让 44 和 47 比较，发现 44 比 47 小，不交换位置。<br/>  接下来让 47 和 15 比较，发现 47 比 15 大，交换两者的位置。</p>
+<p><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/c8b105492e3e45e59fa7eef7dab3815b~tplv-k3u1fbpfcp-watermark.image" alt=""></p>
+<p>  继续让 47 和 36 比较，发现 47 比 36 大，交换两者的位置。</p>
+<p><img src="https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/411ed090f8c04ef59bff8df1bcc2c288~tplv-k3u1fbpfcp-watermark.image" alt=""></p>
+<p>  继续让 47 和 26 比较，发现 47 比 26 大，交换两者的位置。</p>
+<p><img src="https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/4e403d2cd337447588ffc6351fff2dff~tplv-k3u1fbpfcp-watermark.image" alt=""></p>
+<p>  最后让 47 和 27 比较，发现 47 比 27 大，交换两者的位置。</p>
+<p><img src="https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/1cde206e63774a76ac48e768eacca7d4~tplv-k3u1fbpfcp-watermark.image" alt=""></p>
+<p>  这样一来，元素 47 作为数组的最大元素，就像生活中的汽水里的小气泡 &quot;沉在底部&quot;。<br/>  这时候，冒泡排序的第一轮就结束了，数列最右侧的元素 47 就可以认为是一个有序的区域，而这个有序的区域目前只有一个元素。</p>
+<p><img src="https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/5fb1eccdd6a54189818125a5bec1abdc~tplv-k3u1fbpfcp-watermark.image" alt=""></p>
+<p>  下面，让我们来进行第二轮排序。<br/>  首先让 3 和 38 比较，发现 3 比 38 小，不交换位置。<br/>  接下来让 38 和 5 比较，发现 38 比 5 大，交换两者位置。</p>
+<p><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/89f25d0505814bc88bcbe383303069af~tplv-k3u1fbpfcp-watermark.image" alt=""></p>
+<p>  继续让 38 和 44 比较，发现 38 比 44 小，不交换位置。<br/>  接下来让 44 和 15 比较，发现 44 比 15 大，交换两者位置。</p>
+<p><img src="https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/1ca151d9f06647ea8a97f01975168d92~tplv-k3u1fbpfcp-watermark.image" alt=""></p>
+<p>  继续让 44 和 36 比较，发现 44 比 36 大，交换两者位置。</p>
+<p><img src="https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/3012787594694d41b7698e26bb78b8eb~tplv-k3u1fbpfcp-watermark.image" alt=""></p>
+<p>  继续让 44 和 26 比较，发现 44 比 26 大，交换两者位置。</p>
+<p><img src="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/04081a292e734079a837ad88b6de8a55~tplv-k3u1fbpfcp-watermark.image" alt=""></p>
+<p>  继续让 44 和 27 比较，发现 44 比 27 大，交换两者位置。</p>
+<p><img src="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/9d206c719b8041848fe5e57af9d2ffe7~tplv-k3u1fbpfcp-watermark.image" alt=""></p>
+<p>  第二轮排序结束后，右侧的有序区有了两个元素。</p>
+<p><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/06337e6b51784e77867d24c132bcba67~tplv-k3u1fbpfcp-watermark.image" alt=""></p>
+<p>  依次类推，第三轮过后的结果为：</p>
+<p><img src="https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/d43917b7849d4f0ebb8975e4bc50b972~tplv-k3u1fbpfcp-watermark.image" alt=""></p>
+<p>  第四轮过后的结果是：</p>
+<p><img src="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/5489fe7dd1b64939934f64c54324f6b1~tplv-k3u1fbpfcp-watermark.image" alt=""></p>
+<p>  第五轮过后的结果是：</p>
+<p><img src="https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/7717c3def5c74d4684c1a85ef540b406~tplv-k3u1fbpfcp-watermark.image" alt=""></p>
+<p>  第六轮过后的结果是：</p>
+<p><img src="https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/31c04e3f43824983b80c07b3894c0a7e~tplv-k3u1fbpfcp-watermark.image" alt=""></p>
+<p>  第七轮过后的结果是：</p>
+<p><img src="https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6e7021bc4e7d48e8a11ca8041f67e53f~tplv-k3u1fbpfcp-watermark.image" alt=""></p>
+<p>  第八轮过后的结果是：</p>
+<p><img src="https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b7c2c060999449a691721703001f9056~tplv-k3u1fbpfcp-watermark.image" alt=""></p>
+<p>  第九轮过后的结果是：</p>
+<p><img src="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/0ee702994ca746a192300856cddf7d07~tplv-k3u1fbpfcp-watermark.image" alt=""></p>
+<p>  由此，数组中所有元素都是有序的，这就是冒泡排序的整体思路。</p>
+<h2 id="实现"><a class="markdownIt-Anchor" href="#实现">#</a> 实现</h2>
+<p>  遥远的 Arithmetic 星球，植根于算法文明。在追问门派，有这么一对师徒正在探讨如何能够更好地实现冒泡排序：</p>
+<p><img src="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/adc7423a6987496887e90b5ac6c54914~tplv-k3u1fbpfcp-watermark.image" alt=""></p>
+<p><img src="https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/383f63aefb4647f1b7a95c3713147f81~tplv-k3u1fbpfcp-watermark.image" alt=""></p>
+<p>  冒泡排序灯塔第一层：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">var bubbleSort &#x3D; function (arr) &#123;</span><br><span class="line">    console.time(&#39;冒泡排序耗时&#39;)</span><br><span class="line">    for (var i &#x3D; 0; i &lt; arr.length; i++) &#123;</span><br><span class="line">        for (var j &#x3D; 0; j &lt; arr.length - i - 1; j++) &#123;</span><br><span class="line">            &#x2F;&#x2F; 比较相邻两个元素，进行交换</span><br><span class="line">            if (arr[j] &gt; arr[j+1]) &#123;</span><br><span class="line">                var temp &#x3D; arr[j]</span><br><span class="line">                arr[j] &#x3D; arr[j+1]</span><br><span class="line">                arr[j+1] &#x3D; temp</span><br><span class="line">            &#125;</span><br><span class="line">            &#x2F;&#x2F; console.log(arr)</span><br><span class="line">        &#125;</span><br><span class="line">        &#x2F;&#x2F; console.log(i, arr)</span><br><span class="line">    &#125;</span><br><span class="line">    console.timeEnd(&#39;冒泡排序耗时&#39;)</span><br><span class="line">    return arr</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">var arr &#x3D; [3, 44, 38, 5, 47, 15, 36, 26, 27]</span><br><span class="line">console.log(bubbleSort(arr))</span><br></pre></td></tr></table></figure>
+<p><img src="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/3aedd62a3e3c47fbbb6d54286532157e~tplv-k3u1fbpfcp-watermark.image" alt=""></p>
+<p><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/5dddfac06f194c6c808e437594f26b00~tplv-k3u1fbpfcp-watermark.image" alt=""></p>
+<p><img src="https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/8509f47643bf4ed0b9ebae32f01f0fb1~tplv-k3u1fbpfcp-watermark.image" alt=""></p>
+<p><img src="https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6f6b3027175947eea6a2202dd66536f3~tplv-k3u1fbpfcp-watermark.image" alt=""></p>
+<p><img src="https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/22e79b1414e845cf873cfe2e5e260574~tplv-k3u1fbpfcp-watermark.image" alt=""></p>
+<p>  冒泡排序灯塔第二层：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">var bubbleSortFlag &#x3D; function (arr) &#123;</span><br><span class="line">    console.time(&#39;冒泡排序耗时&#39;)</span><br><span class="line">    for (var i &#x3D; 0; i &lt; arr.length; i++) &#123;</span><br><span class="line">        var flag &#x3D; true &#x2F;&#x2F; 设置每一轮是否进行了交换，默认未交换，即有序</span><br><span class="line">        for (var j &#x3D; 0; j &lt; arr.length - i - 1; j++) &#123;</span><br><span class="line">            &#x2F;&#x2F; 比较相邻两个元素，进行交换</span><br><span class="line">            if (arr[j] &gt; arr[j+1]) &#123;</span><br><span class="line">                var temp &#x3D; arr[j]</span><br><span class="line">                arr[j] &#x3D; arr[j+1]</span><br><span class="line">                arr[j+1] &#x3D; temp</span><br><span class="line">                flag &#x3D; false &#x2F;&#x2F; 有元素交换，无序</span><br><span class="line">            &#125;</span><br><span class="line">            &#x2F;&#x2F; console.log(arr)</span><br><span class="line">        &#125;</span><br><span class="line">        console.log(i, arr)</span><br><span class="line">        if (flag) break;</span><br><span class="line">    &#125;</span><br><span class="line">    console.timeEnd(&#39;冒泡排序耗时&#39;)</span><br><span class="line">    return arr</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">var arr &#x3D; [3, 44, 38, 5, 47, 15, 36, 26, 27]</span><br><span class="line">console.log(bubbleSortFlag(arr))</span><br></pre></td></tr></table></figure>
+<p><img src="https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/1cb5322839334413bece429d7f61f4d6~tplv-k3u1fbpfcp-watermark.image" alt=""></p>
+<p><img src="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/675c281fa6dc4edba346805d52c687df~tplv-k3u1fbpfcp-watermark.image" alt=""></p>
+<p>  有一个数组：3，5，2，4，1，6，7，8，9，该数组前半部分 (3，5，2，4，1) 是无序的，而后半部分 (6，7，8，9) 是有序的。其冒泡排序流程如下：<br/>  第一轮：<br/>  元素 3 和 5 比较，3 比 5 小，不交换位置。<br/>  元素 5 和 2 比较，5 比 2 大，交换两者位置。</p>
+<p><img src="https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/3dc409c5079d49c5ace413302c6cbf12~tplv-k3u1fbpfcp-watermark.image" alt=""></p>
+<p>  元素 5 和 4 比较，5 比 4 大，交换两者位置。</p>
+<p><img src="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/3d8bdd2fb8c042f3b3354ffcf5ef5fe7~tplv-k3u1fbpfcp-watermark.image" alt=""></p>
+<p>  元素 5 和 1 比较，5 比 1 大，交换两者位置。</p>
+<p><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/20fb9a10025740bd91b9259eac93ed45~tplv-k3u1fbpfcp-watermark.image" alt=""></p>
+<p>  元素 5 和 6 比较，5 比 6 小，不交换位置。<br/>  元素 6 和 7 比较，6 比 7 小，不交换位置。<br/>  元素 7 和 8 比较，7 比 8 小，不交换位置。<br/>  元素 8 和 9 比较，8 比 9 小，不交换位置。<br/>  第一轮结束，数组有序区包含一个元素。</p>
+<p><img src="https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/482772a433bc499397fe5b983975e151~tplv-k3u1fbpfcp-watermark.image" alt="">  第二轮：<br/>  元素 3 和 2 比较，3 比 2 大，交换两者位置。</p>
+<p><img src="https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/15e52bc0565d46a2994b73970ad1d197~tplv-k3u1fbpfcp-watermark.image" alt=""></p>
+<p>  元素 3 和 4 比较，3 比 4 小，不交换位置。<br/>  元素 4 和 1 比较，4 比 1 大，交换两者位置。</p>
+<p><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/c59fd1e68d3842a5bc0703cb0c1e5fb9~tplv-k3u1fbpfcp-watermark.image" alt=""></p>
+<p>  元素 4 和 5 比较，4 比 5 小，不交换位置。<br/>  元素 5 和 6 比较，5 比 6 小，不交换位置。<br/>  元素 6 和 7 比较，6 比 7 小，不交换位置。<br/>  元素 7 和 8 比较，7 比 8 小，不交换位置。<br/>  元素 8 和 9 比较，8 比 9 小，不交换位置。<br/>  第二轮结束，数组有序区包含两个元素。</p>
+<p><img src="https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/5110116eb6064c8487db8317ab27fb1b~tplv-k3u1fbpfcp-watermark.image" alt=""></p>
+<p>  依次类推，第三轮结束，数组有序区包含三个元素。</p>
+<p><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f5bcdfff3d74435bb627fef8df428660~tplv-k3u1fbpfcp-watermark.image" alt=""></p>
+<p>  第四轮结束，数组有序区包含四个元素。</p>
+<p><img src="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/14b24dd21b0847f99be5a3f9a97ca878~tplv-k3u1fbpfcp-watermark.image" alt=""></p>
+<p>  第五轮结束，数组有序区包含五个元素。</p>
+<p><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/1f0da38dbcfc47c4af368a642aea407b~tplv-k3u1fbpfcp-watermark.image" alt=""></p>
+<p>  第六轮结束，数组有序区包含六个元素。</p>
+<p><img src="https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/0bca27f7ffb24e5abd2e87a020e8ad1a~tplv-k3u1fbpfcp-watermark.image" alt=""></p>
+<p>  第七轮结束，数组有序区包含七个元素。</p>
+<p><img src="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/e9d94234e99f4e86a7a9e5fcd7285742~tplv-k3u1fbpfcp-watermark.image" alt=""></p>
+<p>  第八轮结束，数组有序区包含八个元素。</p>
+<p><img src="https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/58d6bd2526a342cc84a5e80a3c6d3db4~tplv-k3u1fbpfcp-watermark.image" alt=""></p>
+<p>  第九轮结束，数组全部元素都属于有序区。</p>
+<p><img src="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/99379f30d75849ef86e2f6e8c09a876f~tplv-k3u1fbpfcp-watermark.image" alt=""></p>
+<p><img src="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/7aea479bc16c46d9a32125da7ee90970~tplv-k3u1fbpfcp-watermark.image" alt=""></p>
+<p><img src="https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/7826e11e7b774a4e87ab34fbc1a582da~tplv-k3u1fbpfcp-watermark.image" alt=""></p>
+<p><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/20b216c3d3234d4d96138abb321905d7~tplv-k3u1fbpfcp-watermark.image" alt=""></p>
+<p><img src="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/53c01d0e08c243408dc0b7af61467480~tplv-k3u1fbpfcp-watermark.image" alt=""></p>
+<p>  冒泡排序灯塔第三层：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">var bubbleSortDic &#x3D; function (arr) &#123;</span><br><span class="line">    var len &#x3D; arr.length - 1 </span><br><span class="line">    var firstSwrapIndex &#x3D; 0  &#x2F;&#x2F; 设置最后交换元素的位置</span><br><span class="line">    console.time(&#39;冒泡排序耗时&#39;)</span><br><span class="line">    for (var i &#x3D; 0; i &lt; arr.length; i++) &#123;</span><br><span class="line">        var flag &#x3D; true</span><br><span class="line">        for (var j &#x3D; 0; j &lt; len; j++) &#123;</span><br><span class="line">            &#x2F;&#x2F; 比较相邻两个元素，进行交换</span><br><span class="line">            if (arr[j] &gt; arr[j+1]) &#123;</span><br><span class="line">                var temp &#x3D; arr[j]</span><br><span class="line">                arr[j] &#x3D; arr[j+1]</span><br><span class="line">                arr[j+1] &#x3D; temp</span><br><span class="line">                flag &#x3D; false</span><br><span class="line">                firstSwrapIndex &#x3D; j</span><br><span class="line">            &#125;</span><br><span class="line">            &#x2F;&#x2F; console.log(arr)</span><br><span class="line">        &#125;</span><br><span class="line">        len &#x3D; firstSwrapIndex &#x2F;&#x2F; 最后一次交换的位置</span><br><span class="line">        console.log(i, arr, len)</span><br><span class="line">        if (flag) break;</span><br><span class="line">    &#125;</span><br><span class="line">    console.timeEnd(&#39;冒泡排序耗时&#39;)</span><br><span class="line">    return arr</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">var arr &#x3D; [3, 5, 2, 4, 1, 6, 7, 8, 9]</span><br><span class="line">console.log(bubbleSortDic(arr))</span><br></pre></td></tr></table></figure>
+<h2 id="冒泡排序分析"><a class="markdownIt-Anchor" href="#冒泡排序分析">#</a> 冒泡排序分析</h2>
+<p><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/bfa4ea735d644d1f8d6655d29006e947~tplv-k3u1fbpfcp-watermark.image" alt=""></p>
+<p><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/51c83b3dcba54228841bbcbfa4dd120e~tplv-k3u1fbpfcp-watermark.image" alt=""></p>
+<p><img src="https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/257a7920f41040319a494449c57e6f99~tplv-k3u1fbpfcp-watermark.image" alt=""></p>
+<p><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/3b9b74afc4534c02ada6ca9362ba8e0f~tplv-k3u1fbpfcp-watermark.image" alt=""></p>
+<p><img src="https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/0a1171092e7b4cecb937eb24c2854c76~tplv-k3u1fbpfcp-watermark.image" alt=""></p>
+<p><img src="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/2e6262093f9640fab15387d9fb7e40bc~tplv-k3u1fbpfcp-watermark.image" alt=""></p>
+<p><img src="https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/7c96f264593848ada8ace8338ee11c99~tplv-k3u1fbpfcp-watermark.image" alt=""></p>
+<h2 id="冒泡排序升级鸡尾酒排序"><a class="markdownIt-Anchor" href="#冒泡排序升级鸡尾酒排序">#</a> 冒泡排序升级 —— 鸡尾酒排序</h2>
+<p><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/729678729c5c44208e09a11bb6a0739f~tplv-k3u1fbpfcp-watermark.image" alt=""></p>
+<p><img src="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/bedd89de0bbf4a48bed1a40c4f769386~tplv-k3u1fbpfcp-watermark.image" alt=""></p>
+<p><img src="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/bd10664fa29c4310a1cbb4cefbaa3f68~tplv-k3u1fbpfcp-watermark.image" alt=""></p>
+<p><img src="https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/0f2e40b36f144ed78bac8c2f86906157~tplv-k3u1fbpfcp-watermark.image" alt=""></p>
+<p><img src="https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/2cbbd4610f1748b080b419151e655990~tplv-k3u1fbpfcp-watermark.image" alt=""></p>
+<p><img src="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/1f4a0057124e4a4ba17369a02119ac16~tplv-k3u1fbpfcp-watermark.image" alt=""></p>
+<p><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/0f40779dfb974b49a5690ba9ba10d5ae~tplv-k3u1fbpfcp-watermark.image" alt=""></p>
+<p><img src="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a22405fe561748d28934300f649c5a01~tplv-k3u1fbpfcp-watermark.image" alt=""></p>
+<p>  有一个数组：15，9，18，6，12，23，2，32 29，其鸡尾酒排序过程如下：<br/>  第一轮，与冒泡排序一样操作，最后得到如下结果。</p>
+<p><img src="https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/9eebfd13cdb243b3a8fb6e51d86c3674~tplv-k3u1fbpfcp-watermark.image" alt="">   第二轮开始不一样，它是从右往左进行比较和交换。<br>
+  首先元素 29 和 23 进行比较，发现 29 比 23 大，不交换位置。<br/>  然后元素 23 和 2 进行比较，发现 23 比 2 大，不交换位置。<br/>  接下来元素 2 和 18 进行比较，发现 2 比 18 小，交换两者位置。</p>
+<p><img src="https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/4f0da10eb91f49de9080a728d064cf10~tplv-k3u1fbpfcp-watermark.image" alt="">  继续元素 2 和 12 进行比较，发现 2 比 12 小，交换两者位置。</p>
+<p><img src="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ef07726c1b53404a9ecd064f03d91600~tplv-k3u1fbpfcp-watermark.image" alt=""></p>
+<p>  继续元素 2 和 6 进行比较，发现 2 比 6 小，交换两者位置。</p>
+<p><img src="https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/0f2130ed85a44ba4bf541a23cd685c84~tplv-k3u1fbpfcp-watermark.image" alt=""></p>
+<p>  继续元素 2 和 15 进行比较，发现 2 比 15 小，交换两者位置。</p>
+<p><img src="https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/86b03ec0b79e458ca931bd184456b3a7~tplv-k3u1fbpfcp-watermark.image" alt=""></p>
+<p>  继续元素 2 和 9 进行比较，发现 2 比 9 小，交换两者位置。</p>
+<p><img src="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/5891cefa7fb24980b10f7f2b2e7ad46f~tplv-k3u1fbpfcp-watermark.image" alt=""></p>
+<p>  最终，第二轮结束后得到的结果如下：</p>
+<p><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/49dd804f77ee4eab82911333b33398eb~tplv-k3u1fbpfcp-watermark.image" alt=""></p>
+<p>  第三轮：<br>
+  首先比较元素 9 和 15，9 比 15 小，不交换位置。<br>
+  然后比较元素 15 和 6，15 比 6 大，交换两者位置。</p>
+<p><img src="https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/cd476a57a7564045961f4c503a17019c~tplv-k3u1fbpfcp-watermark.image" alt=""></p>
+<p>  继续比较元素 15 和 12，15 比 12 小，交换两者位置。</p>
+<p><img src="https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/dddb0452d9874daa84a25a01bc476369~tplv-k3u1fbpfcp-watermark.image" alt=""></p>
+<p>  接着比较元素 15 和 18，15 比 18 小，不交换位置。<br>
+  然后比较元素 18 和 23，18 比 23 小，不交换位置。<br>
+  最后比较元素 23 和 29，23 比 29 小，不交换位置。<br>
+  第三轮结束后状态如下：</p>
+<p><img src="https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/3be716893da24c82b1d141e8cb81eca5~tplv-k3u1fbpfcp-watermark.image" alt=""></p>
+<p>  以此类推，第四轮结束后的结果为：</p>
+<p><img src="https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b2f72f6311eb4899be2ff4582be333de~tplv-k3u1fbpfcp-watermark.image" alt=""></p>
+<p>  第五轮结束后的结果：</p>
+<p><img src="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/876689531a0749e49b30aacda25ec5b9~tplv-k3u1fbpfcp-watermark.image" alt=""></p>
+<p>  第六轮结束后的结果：</p>
+<p><img src="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/12699850ca074397ae3b24aeb30242c7~tplv-k3u1fbpfcp-watermark.image" alt=""></p>
+<p>  第七轮结束后的结果：</p>
+<p><img src="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/5191401f127a48c5901b9c1bbf6a303c~tplv-k3u1fbpfcp-watermark.image" alt=""></p>
+<p>  第八轮结束后的结果：</p>
+<p><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/655944a421644605b050d5324f7c3cc0~tplv-k3u1fbpfcp-watermark.image" alt=""></p>
+<p>  第九轮结束后的结果：</p>
+<p><img src="https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6570635800b344efb63297ab93c16342~tplv-k3u1fbpfcp-watermark.image" alt=""></p>
+<h2 id="鸡尾酒排序实现"><a class="markdownIt-Anchor" href="#鸡尾酒排序实现">#</a> 鸡尾酒排序实现</h2>
+<p><img src="https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/914b497e5f3f448a9818c41c76b068fa~tplv-k3u1fbpfcp-watermark.image" alt=""></p>
+<p><img src="https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/e45a65b849cf49c3942cc93ca78d4dfb~tplv-k3u1fbpfcp-watermark.image" alt=""></p>
+<p>  冒泡排序灯塔顶层第一关：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">var cocktailSort &#x3D; function (arr) &#123;</span><br><span class="line">    &#x2F;&#x2F; 来去为一回合，共循环数组长度的一半</span><br><span class="line">    &#x2F;&#x2F; console.log(arr.length)</span><br><span class="line">    var temp &#x2F;&#x2F; 交换时暂存变量</span><br><span class="line">    console.time(&#39;鸡尾酒排序耗时&#39;)</span><br><span class="line">    for (var i &#x3D; 0; i &lt; arr.length &#x2F; 2; i++) &#123;</span><br><span class="line">        &#x2F;&#x2F; 从左向右依次比较并进行交换</span><br><span class="line">        for (var j &#x3D; 0; j &lt; arr.length - 1 - i; j++) &#123;</span><br><span class="line">            if (arr[j] &gt; arr[j+1]) &#123;</span><br><span class="line">                &#x2F;&#x2F; 进行交换</span><br><span class="line">                temp &#x3D; arr[j] </span><br><span class="line">                arr[j] &#x3D; arr[j+1]</span><br><span class="line">                arr[j+1] &#x3D; temp</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        console.log(i, arr)</span><br><span class="line">        &#x2F;&#x2F; 从右向左依次比较进行交换</span><br><span class="line">        for (var k &#x3D; arr.length - 1 - i; k &gt; i; k--)&#123;</span><br><span class="line">            if (arr[k] &lt; arr[k-1]) &#123;</span><br><span class="line">                temp &#x3D; arr[k]</span><br><span class="line">                arr[k] &#x3D; arr[k-1]</span><br><span class="line">                arr[k-1] &#x3D; temp</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        console.log(i, arr)</span><br><span class="line">    &#125;</span><br><span class="line">    console.timeEnd(&#39;鸡尾酒排序耗时&#39;)</span><br><span class="line">    return arr</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">var arr &#x3D; [15, 9, 18, 6, 12, 23, 2, 32, 29]</span><br><span class="line">console.log(cocktailSort(arr))</span><br></pre></td></tr></table></figure>
+<p><img src="https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b1da05d14deb4fd8aafc817faf7a5728~tplv-k3u1fbpfcp-watermark.image" alt=""></p>
+<p><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/bcd73118967a4d038b5d5de3e355e9c5~tplv-k3u1fbpfcp-watermark.image" alt=""></p>
+<p><img src="https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/0c34a44e2ae44af2bc965a22d8828566~tplv-k3u1fbpfcp-watermark.image" alt=""></p>
+<p>  冒泡排序灯塔顶层第二关：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">var cocktailRanking &#x3D; function (arr) &#123;</span><br><span class="line">    &#x2F;&#x2F; 来去为一回合，共循环数组长度的一半</span><br><span class="line">    &#x2F;&#x2F; console.log(arr.length)</span><br><span class="line">    var temp &#x2F;&#x2F; 交换时暂存变量</span><br><span class="line">    var isSorted &#x2F;&#x2F; 标记是否进行交换</span><br><span class="line">    console.time(&#39;鸡尾酒排序耗时&#39;)</span><br><span class="line">    for (var i &#x3D; 0; i &lt; arr.length &#x2F; 2; i++) &#123;</span><br><span class="line">        &#x2F;&#x2F; 从左向右依次比较并进行交换</span><br><span class="line">        isSorted &#x3D; true</span><br><span class="line">        for (var j &#x3D; 0; j &lt; arr.length - 1 - i; j++) &#123;</span><br><span class="line">            if (arr[j] &gt; arr[j+1]) &#123;</span><br><span class="line">                &#x2F;&#x2F; 进行交换</span><br><span class="line">                temp &#x3D; arr[j] </span><br><span class="line">                arr[j] &#x3D; arr[j+1]</span><br><span class="line">                arr[j+1] &#x3D; temp</span><br><span class="line">                isSorted &#x3D; false</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        console.log(i,arr)</span><br><span class="line">        if (isSorted) break</span><br><span class="line">        &#x2F;&#x2F; 标记未进行交换</span><br><span class="line">        isSorted &#x3D; true</span><br><span class="line">        &#x2F;&#x2F; 从右向左依次比较进行交换</span><br><span class="line">        for (var k &#x3D; arr.length - 1 - i; k &gt; i; k--)&#123;</span><br><span class="line">            if (arr[k] &lt; arr[k-1]) &#123;</span><br><span class="line">                temp &#x3D; arr[k]</span><br><span class="line">                arr[k] &#x3D; arr[k-1]</span><br><span class="line">                arr[k-1] &#x3D; temp</span><br><span class="line">                isSorted &#x3D; false</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        console.log(i,arr)</span><br><span class="line">        if (isSorted) break</span><br><span class="line">    &#125;</span><br><span class="line">    console.timeEnd(&#39;鸡尾酒排序耗时&#39;)</span><br><span class="line">    return arr</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">var arr &#x3D; [15, 9, 18, 6, 12, 23, 2, 32, 29]</span><br><span class="line">console.log(cocktailRanking(arr))</span><br></pre></td></tr></table></figure>
+<p><img src="https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6e3237fc3a31421aa71ecc3042864968~tplv-k3u1fbpfcp-watermark.image" alt=""></p>
+<p>  冒泡排序灯塔顶层终极：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line">var cocktailSort &#x3D; function (arr) &#123;</span><br><span class="line">    &#x2F;&#x2F; 来去为一回合，共循环数组长度的一半</span><br><span class="line">    &#x2F;&#x2F; console.log(arr.length)</span><br><span class="line">    var temp &#x2F;&#x2F; 交换时暂存变量</span><br><span class="line">    var leftBorder &#x3D; 0, rightBorder &#x3D; arr.length - 1 &#x2F;&#x2F; 设置左右边界值</span><br><span class="line">    var leftSortIndex, rightSortIndex &#x2F;&#x2F;设置左边最后一组交换位置的下标，右边最后一组交换位置的下标</span><br><span class="line">    var isSorted &#x2F;&#x2F; 标记是否进行交换</span><br><span class="line">    console.time(&#39;鸡尾酒排序耗时&#39;)</span><br><span class="line">    for (var i &#x3D; 0; i &lt; arr.length &#x2F; 2; i++) &#123;</span><br><span class="line">        &#x2F;&#x2F; 从左向右依次比较并进行交换</span><br><span class="line">        isSorted &#x3D; true</span><br><span class="line">        for (var j &#x3D; leftBorder; j &lt; rightBorder; j++) &#123;</span><br><span class="line">            if (arr[j] &gt; arr[j+1]) &#123;</span><br><span class="line">                &#x2F;&#x2F; 进行交换</span><br><span class="line">                temp &#x3D; arr[j] </span><br><span class="line">                arr[j] &#x3D; arr[j+1]</span><br><span class="line">                arr[j+1] &#x3D; temp</span><br><span class="line">                isSorted &#x3D; false</span><br><span class="line">                rightSortIndex &#x3D; j</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        rightBorder &#x3D; rightSortIndex</span><br><span class="line">        console.log(i,arr)</span><br><span class="line">        if (isSorted) break</span><br><span class="line">        &#x2F;&#x2F; 标记未进行交换</span><br><span class="line">        isSorted &#x3D; true</span><br><span class="line">        &#x2F;&#x2F; 从右向左依次比较进行交换</span><br><span class="line">        for (var k &#x3D; rightBorder; k &gt; leftBorder; k--)&#123;</span><br><span class="line">            if (arr[k] &lt; arr[k-1]) &#123;</span><br><span class="line">                temp &#x3D; arr[k]</span><br><span class="line">                arr[k] &#x3D; arr[k-1]</span><br><span class="line">                arr[k-1] &#x3D; temp</span><br><span class="line">                isSorted &#x3D; false</span><br><span class="line">                leftSortIndex &#x3D; k</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        leftBorder &#x3D; leftSortIndex</span><br><span class="line">        console.log(i,arr)</span><br><span class="line">        if (isSorted) break</span><br><span class="line">    &#125;</span><br><span class="line">    console.timeEnd(&#39;鸡尾酒排序耗时&#39;)</span><br><span class="line">    return arr</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">var arr &#x3D; [15, 9, 18, 6, 12, 23, 2, 32, 29]</span><br><span class="line">console.log(cocktailSort(arr))</span><br></pre></td></tr></table></figure>
+<p><img src="https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/80081457d1634e47bfe8e45aa093b9ae~tplv-k3u1fbpfcp-watermark.image" alt=""></p>
+<p><img src="https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/d3211d7b94f24be19d1142de4ef75ece~tplv-k3u1fbpfcp-watermark.image" alt=""></p>
+<p>  冒泡排序算法就到此为止。<br>
+  其实排序算法博大精深，还有许多排序算法没来及总结，等我整理好后，我一定还会回来的。</p>
+<p><img src="https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/380508881e3642849ec0ea8fd88ec6e0~tplv-k3u1fbpfcp-watermark.image" alt=""></p>
+<blockquote>
+<p>如果喜欢我的文章请 &quot;点赞&quot; “评论” “关注”，大家的支持就是我坚持下去的动力！若是以上内容有任何错误或者不准确的地方，欢迎留言指出，若你有更好的想法，也欢迎一起交流学习！</p>
+</blockquote>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="mailto:undefined">遇见</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="https://ttt2021.github.io/posts/61988d84/">https://ttt2021.github.io/posts/61988d84/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E6%8E%92%E5%BA%8F/">排序</a></div><div class="post_share"><div class="social-share" data-image="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/61e44ece224b418488139a4bed638791~tplv-k3u1fbpfcp-zoom-1.image" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/posts/e8f85541/"><img class="next-cover" src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/21784b9fef384458ba78342ddd3312a3~tplv-k3u1fbpfcp-zoom-1.image" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">Next Post</div><div class="next_info">原型与原型链</div></div></a></div></nav><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> Comment</span></div></div><div class="comment-wrap"><div><div class="vcomment" id="vcomment"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="card-info-avatar is-center"><img class="avatar-img" src="https://i.loli.net/2021/04/01/kU2cj5qEKeXaJNo.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/><div class="author-info__name">遇见</div><div class="author-info__description">人生无逆旅，我亦是行人。远征星辰大海，归来仍是少年。</div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">2</div></a></div><div class="card-info-data-item is-center"><a href="/tags/"><div class="headline">Tags</div><div class="length-num">2</div></a></div><div class="card-info-data-item is-center"><a href="/categories/"><div class="headline">Categories</div><div class="length-num">2</div></a></div></div><a class="button--animated" id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/ttt2021"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>Announcement</span></div><div class="announcement_content">当回首往事时，不因虚度年华而悔恨，也不因碌碌无为而羞愧。</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>Catalog</span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AE%97%E6%B3%95%E6%80%9D%E6%83%B3"><span class="toc-number">1.</span> <span class="toc-text"> 算法思想</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0"><span class="toc-number">2.</span> <span class="toc-text"> 实现</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%92%E6%B3%A1%E6%8E%92%E5%BA%8F%E5%88%86%E6%9E%90"><span class="toc-number">3.</span> <span class="toc-text"> 冒泡排序分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%92%E6%B3%A1%E6%8E%92%E5%BA%8F%E5%8D%87%E7%BA%A7%E9%B8%A1%E5%B0%BE%E9%85%92%E6%8E%92%E5%BA%8F"><span class="toc-number">4.</span> <span class="toc-text"> 冒泡排序升级 —— 鸡尾酒排序</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%B8%A1%E5%B0%BE%E9%85%92%E6%8E%92%E5%BA%8F%E5%AE%9E%E7%8E%B0"><span class="toc-number">5.</span> <span class="toc-text"> 鸡尾酒排序实现</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Post</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/posts/61988d84/" title="你不知道的冒泡排序优化"><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/61e44ece224b418488139a4bed638791~tplv-k3u1fbpfcp-zoom-1.image" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="你不知道的冒泡排序优化"/></a><div class="content"><a class="title" href="/posts/61988d84/" title="你不知道的冒泡排序优化">你不知道的冒泡排序优化</a><time datetime="2021-05-15T08:33:21.111Z" title="Created 2021-05-15 16:33:21">2021-05-15</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/e8f85541/" title="原型与原型链"><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/21784b9fef384458ba78342ddd3312a3~tplv-k3u1fbpfcp-zoom-1.image" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="原型与原型链"/></a><div class="content"><a class="title" href="/posts/e8f85541/" title="原型与原型链">原型与原型链</a><time datetime="2021-05-15T06:15:50.000Z" title="Created 2021-05-15 14:15:50">2021-05-15</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2021  <i id="heartbeat" class="fa fas fa-heartbeat"></i> 遇见</div><div class="framework-info"><span>框架  </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题  </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><div class="footer_custom_text">远征星辰大海，归来仍是少年。</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="fas fa-book-open"></i></button><button id="font-plus" type="button" title="Increase font size"><i class="fas fa-plus"></i></button><button id="font-minus" type="button" title="Decrease font size"><i class="fas fa-minus"></i></button><button id="translateLink" type="button" title="Toggle Between Traditional Chinese And Simplified Chinese">简</button><button id="darkmode" type="button" title="Toggle Between Light And Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="Toggle between single-column and double-column"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="Setting"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="fas fa-list-ul"></i></button><button id="chat_btn" type="button" title="rightside.chat_btn"><i class="fas fa-sms"></i></button><a id="to_comment" href="#post-comment" title="Scroll To Comments"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="Back To Top"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><div class="search-dialog__title" id="local-search-title">Local search</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="Search for Posts" type="text"/></div></div></div><hr/><div id="local-search-results"></div><span class="search-close-button"><i class="fas fa-times"></i></span></div><div id="search-mask"></div></div><div><script src="https://cdn.jsdelivr.net/npm/vue@2.6.11"></script><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="/js/search/local-search.js"></script><script>var preloader = {
+  endLoading: () => {
+    document.body.style.overflow = 'auto';
+    document.getElementById('loading-box').classList.add("loaded")
+  },
+  initLoading: () => {
+    document.body.style.overflow = '';
+    document.getElementById('loading-box').classList.remove("loaded")
+
+  }
+}
+window.addEventListener('load',preloader.endLoading())</script><div class="js-pjax"><script>function loadValine () {
+  function initValine () {
+    const valine = new Valine(Object.assign({
+      el: '#vcomment',
+      appId: 'jCe0R6q7T089KzdMwSmv4WeR-gzGzoHsz',
+      appKey: '8mOPSw8gLbwawNIeqNRhlkgY',
+      placeholder: 'Please leave your footprints',
+      avatar: 'monsterid',
+      meta: 'nick,mail,link'.split(','),
+      pageSize: '10',
+      lang: 'zh-CN',
+      recordIP: false,
+      serverURLs: '',
+      emojiCDN: '',
+      emojiMaps: "",
+      enableQQ: false,
+      path: window.location.pathname,
+      requiredFields: ["nick,mail"],
+      visitor: false
+    }, null))
+  }
+
+  if (typeof Valine === 'function') initValine() 
+  else getScript('https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js').then(initValine)
+}
+
+if ('Valine' === 'Valine' || !false) {
+  if (false) btf.loadComment(document.getElementById('vcomment'),loadValine)
+  else setTimeout(loadValine, 0)
+} else {
+  function loadOtherComment () {
+    loadValine()
+  }
+}</script></div><div class="aplayer no-destroy" data-id="720305850" data-server="netease" data-type="playlist" data-fixed="true" data-mini="true" data-listFolded="false" data-order="random" data-lrctype="1" data-preload="none" data-autoplay="true" muted></div><script src="/js/calendar.js"></script><script src="/js/languages.js"></script><script src="https://cdn.jsdelivr.net/npm/vue@2.6.11"></script><script src="/gitcalendar/js/gitcalendar.js"></script><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-fluttering-ribbon.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = false;
+document.body.addEventListener('input', POWERMODE);
+</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/gh/metowolf/MetingJS@1.2/dist/Meting.min.js"></script><script src="https://cdn.jsdelivr.net/npm/pjax/pjax.min.js"></script><script>let pjaxSelectors = [
+  'title',
+  '#config-diff',
+  '#body-wrap',
+  '#rightside-config-hide',
+  '#rightside-config-show',
+  '.js-pjax'
+]
+
+if (false) {
+  pjaxSelectors.unshift('meta[property="og:image"]', 'meta[property="og:title"]', 'meta[property="og:url"]')
+}
+
+var pjax = new Pjax({
+  elements: 'a:not([target="_blank"])',
+  selectors: pjaxSelectors,
+  cacheBust: false,
+  analytics: false,
+  scrollRestoration: false
+})
+
+document.addEventListener('pjax:complete', function () {
+  window.refreshFn()
+
+  document.querySelectorAll('script[data-pjax]').forEach(item => {
+    const newScript = document.createElement('script')
+    const content = item.text || item.textContent || item.innerHTML || ""
+    Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+    newScript.appendChild(document.createTextNode(content))
+    item.parentNode.replaceChild(newScript, item)
+  })
+
+  GLOBAL_CONFIG.islazyload && window.lazyLoadInstance.update()
+
+  typeof chatBtnFn === 'function' && chatBtnFn()
+  typeof panguInit === 'function' && panguInit()
+
+  // google analytics
+  typeof gtag === 'function' && gtag('config', '', {'page_path': window.location.pathname});
+
+  // baidu analytics
+  typeof _hmt === 'object' && _hmt.push(['_trackPageview',window.location.pathname]);
+
+  typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+
+  // Analytics
+  if (false) {
+    MtaH5.pgv()
+  }
+
+  // prismjs
+  typeof Prism === 'object' && Prism.highlightAll()
+
+  typeof preloader === 'object' && preloader.endLoading()
+})
+
+
+document.addEventListener('pjax:send', function () {
+  typeof preloader === 'object' && preloader.initLoading()
+  
+  if (window.aplayers) {
+    for (let i = 0; i < window.aplayers.length; i++) {
+      if (!window.aplayers[i].options.fixed) {
+        window.aplayers[i].destroy()
+      }
+    }
+  }
+
+  typeof typed === 'object' && typed.destroy()
+
+  //reset readmode
+  const $bodyClassList = document.body.classList
+  $bodyClassList.contains('read-mode') && $bodyClassList.remove('read-mode')
+
+})
+
+document.addEventListener('pjax:error', (e) => {
+  if (e.request.status === 404) {
+    pjax.loadUrl('/404.html')
+  }
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><script>var gitcalendar = new Vue({
+  el: '#gitcalendar',
+  data: {
+    simplemode: true, 
+    user: 'Akilarlxh',
+    fixed: 'fixed',
+    px: 'px',
+    x: '',
+    y: '',
+    span1: '',
+    span2: '',
+    month: ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'],
+    monthchange: [],
+    oneyearbeforeday: '',
+    thisday: '',
+    amonthago: '',
+    aweekago: '',
+    weekdatacore: 0,
+    datacore: 0,
+    total: 0,
+    datadate: '',
+    data: [],
+    positionplusdata: [],
+    firstweek: [],
+    lastweek: [],
+    beforeweek: [],
+    thisweekdatacore: 0,
+    mounthbeforeday: 0,
+    mounthfirstindex: 0,
+    crispedges: 'crispedges',
+    thisdayindex: 0,
+    amonthagoindex: 0,
+    amonthagoweek: [],
+    firstdate: [],
+    first2date: [],
+    montharrbefore: [],
+    monthindex: 0,
+    color: ['#e4dfd7', '#f9f4dc', '#f7e8aa', '#f7e8aa', '#f8df72', '#fcd217', '#fcc515', '#f28e16', '#fb8b05', '#d85916', '#f43e06']
+  },
+  methods: {
+    selectStyle(data, event) {
+      document.querySelector('.angle-wrapper').style.display = 'block'
+      this.span1 = data.date;
+      this.span2 = data.count;
+      this.x = event.clientX - 100;
+      this.y = event.clientY - 60
+    },
+    outStyle() {
+      document.querySelector('.angle-wrapper').style.display = 'none'
+    },
+    thiscolor(x) {
+      if (x === 0) {
+        let i = parseInt(x / 2);
+        return this.color[0]
+      } else if (x < 2) {
+        return this.color[1]
+      } else if (x < 20) {
+        let i = parseInt(x / 2);
+        return this.color[i]
+      } else {
+        return this.color[9]
+      }
+    },
+  }
+});
+var apiurl = '' ? 'https:///api?' : 'https://githubapi.ryanchristian.dev/user/'
+var githubapiurl = apiurl + gitcalendar.user;
+//canvas绘图
+function responsiveChart() {
+  let c = document.getElementById("gitcanvas");
+  if (c) {
+    let cmessage = document.getElementById("gitmessage");
+    let ctx = c.getContext("2d");
+    c.width = document.getElementById("gitcalendarcanvasbox").offsetWidth;
+    let linemaxwitdh = 0.96 * c.width / gitcalendar.data.length;
+    c.height = 9 * linemaxwitdh;
+    let lineminwitdh = 0.8 * linemaxwitdh;
+    let setposition = {
+      x: 0.02 * c.width,
+      y: 0.025 * c.width
+    };
+    for (let week in gitcalendar.data) {
+      weekdata = gitcalendar.data[week];
+      for (let day in weekdata) {
+        let dataitem = {
+          date: "",
+          count: "",
+          x: 0,
+          y: 0
+        };
+        gitcalendar.positionplusdata.push(dataitem);
+        ctx.fillStyle = gitcalendar.thiscolor(weekdata[day].count);
+        setposition.y = Math.round(setposition.y * 100) / 100;
+        dataitem.date = weekdata[day].date;
+        dataitem.count = weekdata[day].count;
+        dataitem.x = setposition.x;
+        dataitem.y = setposition.y;
+        ctx.fillRect(setposition.x, setposition.y, lineminwitdh, lineminwitdh);
+        setposition.y = setposition.y + linemaxwitdh
+      };
+      setposition.y = 0.025 * c.width;
+      setposition.x = setposition.x + linemaxwitdh
+    };
+    ctx.font = "600  Arial";
+    ctx.fillStyle = '#aaa';
+    ctx.fillText("日", 0, 1.9 * linemaxwitdh);
+    ctx.fillText("二", 0, 3.9 * linemaxwitdh);
+    ctx.fillText("四", 0, 5.9 * linemaxwitdh);
+    ctx.fillText("六", 0, 7.9 * linemaxwitdh);
+    let monthindexlist = c.width / 24;
+    for (let index in gitcalendar.monthchange) {
+      ctx.fillText(gitcalendar.monthchange[index], monthindexlist, 0.7 * linemaxwitdh);
+      monthindexlist = monthindexlist + c.width / 12
+    };
+    cmessage.onmousemove = function(event) {
+      document.querySelector('.angle-wrapper').style.display = 'none'
+    };
+    c.onmousemove = function(event) {
+      document.querySelector('.angle-wrapper').style.display = 'none'
+      getMousePos(c, event);
+    };
+
+    function getMousePos(canvas, event) {
+      var rect = canvas.getBoundingClientRect();
+      var x = event.clientX - rect.left * (canvas.width / rect.width);
+      var y = event.clientY - rect.top * (canvas.height / rect.height);
+      //console.log("x:"+x+",y:"+y);
+      for (let item of gitcalendar.positionplusdata) {
+        let lenthx = x - item.x;
+        let lenthy = y - item.y;
+        //console.log(lenthx,lenthy);
+        if (0 < lenthx && lenthx < lineminwitdh) {
+          if (0 < lenthy && lenthy < lineminwitdh) {
+            //console.log(item.date,item.count)
+            document.querySelector('.angle-wrapper').style.display = 'block'
+            gitcalendar.span1 = item.date;
+            gitcalendar.span2 = item.count;
+            gitcalendar.x = event.clientX - 100;
+            gitcalendar.y = event.clientY - 60
+          }
+        }
+        //if(0< x - item.x <lineminwitdh&&0< y - item.y <lineminwitdh){
+        //console.log(item.count,item.date);
+        //}
+      }
+    }
+  }
+}
+//数据统计算法
+function addlastmonth() {
+  if (gitcalendar.thisdayindex === 0) {
+    thisweekcore(52);
+    thisweekcore(51);
+    thisweekcore(50);
+    thisweekcore(49);
+    thisweekcore(48);
+    gitcalendar.thisweekdatacore += gitcalendar.firstdate[6].count;
+    gitcalendar.amonthago = gitcalendar.firstdate[6].date
+  } else {
+    thisweekcore(52);
+    thisweekcore(51);
+    thisweekcore(50);
+    thisweekcore(49);
+    thisweek2core();
+    gitcalendar.amonthago = gitcalendar.first2date[gitcalendar.thisdayindex - 1].date
+  }
+};
+
+function thisweek2core() {
+  for (let i = gitcalendar.thisdayindex - 1; i < gitcalendar.first2date.length; i++) {
+    gitcalendar.thisweekdatacore += gitcalendar.first2date[i].count
+  }
+};
+
+function thisweekcore(index) {
+  for (let item of gitcalendar.data[index]) {
+    gitcalendar.thisweekdatacore += item.count
+  }
+};
+
+function addlastweek() {
+  for (let item of gitcalendar.lastweek) {
+    gitcalendar.weekdatacore += item.count
+  }
+};
+
+function addbeforeweek() {
+  for (let i = gitcalendar.thisdayindex; i < gitcalendar.beforeweek.length; i++) {
+    gitcalendar.weekdatacore += gitcalendar.beforeweek[i].count
+  }
+};
+
+function addweek(data) {
+  if (gitcalendar.thisdayindex === 6) {
+    gitcalendar.aweekago = gitcalendar.lastweek[0].date;
+    addlastweek()
+  } else {
+    lastweek = data.contributions[51];
+    gitcalendar.aweekago = lastweek[gitcalendar.thisdayindex + 1].date;
+    addlastweek();
+    addbeforeweek()
+  }
+}
+
+fetch(githubapiurl)
+  .then(data => data.json())
+  .then(data => {
+    gitcalendar.data = data.contributions;
+    gitcalendar.total = data.total;
+    gitcalendar.first2date = gitcalendar.data[48];
+    gitcalendar.firstdate = gitcalendar.data[47];
+    gitcalendar.firstweek = data.contributions[0];
+    gitcalendar.lastweek = data.contributions[52];
+    gitcalendar.beforeweek = data.contributions[51];
+    gitcalendar.thisdayindex = gitcalendar.lastweek.length - 1;
+    gitcalendar.thisday = gitcalendar.lastweek[gitcalendar.thisdayindex].date;
+    gitcalendar.oneyearbeforeday = gitcalendar.firstweek[0].date;
+    gitcalendar.monthindex = gitcalendar.thisday.substring(5, 7) * 1;
+    gitcalendar.montharrbefore = gitcalendar.month.splice(gitcalendar.monthindex, 12 - gitcalendar.monthindex);
+    gitcalendar.monthchange = gitcalendar.montharrbefore.concat(gitcalendar.month);
+    addweek(data);
+    addlastmonth();
+    responsiveChart();
+  })
+  .catch(function(error) {
+    console.log(error);
+  });
+
+//手机版更换为svg绘制
+if (document.getElementById("gitcalendarcanvasbox").offsetWidth < 500) {
+  gitcalendar.simplemode = false
+}
+
+//当改变窗口大小时重新绘制canvas
+window.onresize = function() {
+  if (gitcalendar.simplemode) responsiveChart()
+}
+
+//解决滚动滑轮时出现的标签显示
+window.onscroll = function() {
+  if (document.querySelector('.angle-wrapper')) {
+    document.querySelector('.angle-wrapper').style.display = 'none'
+  }
+};</script></div><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"model":{"jsonPath":"/live2dw/assets/wanko.model.json"},"display":{"position":"right","width":150,"height":200},"mobile":{"show":true},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body></html>

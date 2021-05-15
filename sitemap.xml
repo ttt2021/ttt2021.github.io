@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://ttt2021.github.io/posts/61988d84/</loc>
+    
+    <lastmod>2021-05-15</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://ttt2021.github.io/posts/e8f85541/</loc>
     
     <lastmod>2021-05-15</lastmod>
@@ -52,10 +59,24 @@
     <priority>0.6</priority>
   </url>
   
+  <url>
+    <loc>https://ttt2021.github.io/tags/%E6%8E%92%E5%BA%8F/</loc>
+    <lastmod>2021-05-15</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
 
   
   <url>
     <loc>https://ttt2021.github.io/categories/javascript/</loc>
+    <lastmod>2021-05-15</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://ttt2021.github.io/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/</loc>
     <lastmod>2021-05-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
